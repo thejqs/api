@@ -154,4 +154,4 @@ There isn't much in our data to tell us how frequently to expect writes. But tha
 
 Turns out writes are overwhelming us as sprocket production skyrockets? We can add follower dbs and read only from those, while writing to the leader.
 
-The path forward from here seems clear. Round out another few views, maybe hash or encode the data in transit for security, better obscure the parameters and shape of the data, and get `Django` talking to `Postgres` and `Redis` they way they should. Refactoring the endpoints after that should be no big deal, and a `Django` management command, perhaps run in the container via `make`, can get out data loaded the way we've designed it. 
+The path forward from here seems clear. Round out another few views, maybe hash or encode the data in transit for security, better obscure the parameters and shape of the data, and get `Django` talking to `Postgres` and `Redis` they way they should. Refactoring the endpoints after that should be no big deal, and a `Django` management command, perhaps run in the container via `make`, can get our data loaded the way we've designed it. 
