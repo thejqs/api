@@ -127,4 +127,6 @@ Or we can deal with the fact that we have some data and a `Django` application t
 
 So. 
 
+For now I'll leave the models defined in `project/api/models.py` as an artifact so the intent is clear on what those would have looked like based on the given data. And we'll get on with the show.
+
 In an actual API, we'd have tokens and auth and more robust ways of controlling access. We'd log user agents and have methods for turning off previously-granted access and for blowing away entire accounts.
