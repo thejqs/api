@@ -131,7 +131,9 @@ So.
 
 For now I'll leave the models defined in `project/api/models.py` as an artifact so the intent is clear on what those would have looked like based on the given data. And we'll get on with the show.
 
-In an actual API, we'd have tokens and auth and rate-limits and more robust ways of controlling access. We'd log user agents and have methods for turning off previously-granted access and for blowing away entire accounts. We'd spend more time making sure the way we're shaping our data will scale -- as it gets bigger, as more people attempt to use it, all that fun stuff.
+Also, because this is a local-only example project at the moment, I haven't taken the extra step of moving, say, `Django`-y app secrets and such into provate configs.
+
+In an actual API, we'd have tokens and auth and rate-limits and more robust ways of controlling access. We'd log user agents and have methods for turning off previously-granted access and for blowing away entire accounts. We'd spend more time making sure the way we're shaping our data will scale -- as it gets bigger, as more people attempt to use it, all that fun stuff. 
 
 Speaking of scaling. A few ways we can think about that.
 
