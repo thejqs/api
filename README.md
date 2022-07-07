@@ -94,7 +94,7 @@ Prefer to see only that `chart_data` for a specific `factory`? Try `localhost:80
 
 Now. Let's talk for a minute about workarounds.
 
-While `make local-run` is still running, use another cli tab to check out `make local-pg-cli`. That will give us a command-line interface inside the running `postgres` container. From there, we can do `psql project -U project` (the db role and name being defined for us by our `docker-compose` tools) and get dropped right into the `psql` command line. With a `\d+` we can see there's some Django-y stuff here -- but nothing from the models we defined in `project/api/models.py`.
+While `make local-run` is still running, use another cli tab to check out `make local-pg-cli`. That will give us a command-line interface inside the running `postgres` container. From there, we can do `psql project -U project` (the db role and name being defined for us by our `docker-compose` tools) and get dropped right into the `psql` command line. With a `\d+` we can see there's some `Django`-y stuff here -- but nothing from the models we defined in `project/api/models.py`.
 
 OK, maybe it just failed to run the migrations we told it to in `compose/start-dev.sh`. We can run those ourselves. `\q` out of the db, then `exit` out of the container. And run `make local-makemigrations`. Huh. Nothing found. Well maybe because I made the migration files myself in `project/api/migrations/`. So let's try `make local-migrate`. Weird that it still doesn't see anything.
 
@@ -141,4 +141,4 @@ There isn't much in our data to tell us how frequently to expect writes. But tha
 
 Turns out writes are overwhelming us as sprocket production skyrockets? We can add follower dbs and read only from those, while writing to the leader.
 
-The path forward from here seems clear. Round out another few views, and get `Django` talking to `Postgres` and `Redis` they way they should. Refactoring the endpoints after that should be no big deal, and a `Django` management command, perhaps run in the container via `make`, can get out data loaded the way we've designed it. 
+The path forward from here seems clear. Round out another few views, maybe hash or encode the data in transit for security, better obscure the parameters and shape of the data, and get `Django` talking to `Postgres` and `Redis` they way they should. Refactoring the endpoints after that should be no big deal, and a `Django` management command, perhaps run in the container via `make`, can get out data loaded the way we've designed it. 
