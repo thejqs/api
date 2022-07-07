@@ -92,7 +92,7 @@ factory:
 
 Let's talk for a second about workarounds.
 
-While `make local-run` is still running, use another cli tab to check out `make local-pg-cli`. That will give us a command-line interface inside the running `postgres` container. From there, we can do `psql project -U project` (the db role and name being defined for us by our `docker-compose` tools) and get dropped right into the `psql` command line. With a `\d+` we can see there's some Django-y stuff here -- but nothing from the models we defined in `project/models.py`.
+While `make local-run` is still running, use another cli tab to check out `make local-pg-cli`. That will give us a command-line interface inside the running `postgres` container. From there, we can do `psql project -U project` (the db role and name being defined for us by our `docker-compose` tools) and get dropped right into the `psql` command line. With a `\d+` we can see there's some Django-y stuff here -- but nothing from the models we defined in `project/api/models.py`.
 
 OK, maybe it just failed to run the migrations we told it to in `compose/start-dev.sh`. We can run those ourselves. `\q` out of the db, then `exit` out of the container. And run `make local-makemigrations`. Huh. Nothing found. Well maybe because I made the migration files myself in `project/api/migrations/`. So let's try `make local-migrate`. Weird that it still doesn't see anything.
 
@@ -126,3 +126,5 @@ We can keep losing time.
 Or we can deal with the fact that we have some data and a `Django` application that can serve it and take requests, so we need to do something hacky and bad and wrong that will only meet the barest requirements. Just to show we can. (If only for now. Plus this is all time we're not writing views because ... what exactly would we point them at?)
 
 So. 
+
+In an actual API, we'd have tokens and auth and more robust ways of controlling access. We'd log user agents and have methods for turning off previously-granted access and for blowing away entire accounts.
