@@ -20,6 +20,8 @@ $ make local-build
 $ make local-run
 ```
 
+One nice touch: Even though our code is running in a container, using `py-autoreload` from `uwsgi` means changes we make locally will get autorefreshed into the container.
+
 At this point, in a browser, you should be able to go to `localhost:8000/api/factories` and get back a bunch of `JSON` that would be long to dump in here, or, say, to `localhost:8000/api/fatory/1` and get back something that looks like this:
 
 ```json
