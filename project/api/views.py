@@ -63,12 +63,12 @@ def sprocket(request, sprocket_id):
 
 
 @require_http_methods(['POST'])
-def sprocket_create(request, **kwargs):
+def sprocket_create(request, teeth, pitch_diameter, outside_diameter, pitch):
     new_sprocket_pkg = {
-      "teeth": kwargs.pop("teeth"),
-      "pitch_diameter": kwargs.pop("pitch_diameter"),
-      "outside_diameter": kwargs.pop("outside_diameter"),
-      "pitch": kwargs.pop("pitch")
+      "teeth": teeth,
+      "pitch_diameter": pitch_diameter,
+      "outside_diameter": outside_diameter,
+      "pitch": pitch
     }
 
     with open("data/seed_sprocket_types.json", "rw") as ss:
@@ -90,10 +90,16 @@ def sprocket_create(request, **kwargs):
         return JsonResponse(msg)
 
 
-def sprocket_update(request, sprocket_id, **kwargs):
+def sprocket_update(request, sprocket_id, teeth, pitch_diameter, outside_diameter, pitch):
+    new_sprocket_pkg = {
+        "teeth": teeth,
+        "pitch_diameter": pitch_diameter,
+        "outside_diameter": outside_diameter,
+        "pitch": pitch
+    }
     with open("data/seed_sprocket_types.json", "rw") as ss:
         data = json.load(ss)
-        data["sprockets"][int(sprocket_id)] = kwargs.pop("new_sprocket")
+        data["sprockets"][int(sprocket_id)] = new_sprocket
         msg = {
             "message": "",
             "status_code": None
