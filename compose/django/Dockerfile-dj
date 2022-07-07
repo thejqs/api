@@ -1,0 +1,31 @@
+FROM python:latest
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV DEBIAN_FRONTEND=noninteractive
+
+
+WORKDIR /app
+
+RUN apt-get update && \
+  apt-get dist-upgrade -y && \
+  apt-get install -y zip libxml2-dev libxmlsec1-dev libxmlsec1-openssl && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists*
+
+# Install deps here, or caching won't work
+RUN pip install --upgrade pip
+RUN pip install pipenv
+COPY Pipfile* ${WORKDIR}/
+# don't need a virtualenv in the container; can install to system python
+RUN pipenv install --system --deploy
+
+COPY ./compose/django/entrypoint.sh /entrypoint.sh
+RUN sed -i 's/\r//' /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+COPY ./compose/django/start-dev.sh /start-dev.sh
+RUN sed -i 's/\r//' /start-dev.sh
+RUN chmod +x /start-dev.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
