@@ -90,7 +90,9 @@ factory:
             19	1611205958
 ```
 
-Let's talk for a second about workarounds.
+Prefer to see only that `chart_data` for a specific `factory`? Try `localhost:8000/api/factory/2/chart-data`.
+
+Now. Let's talk for a minute about workarounds.
 
 While `make local-run` is still running, use another cli tab to check out `make local-pg-cli`. That will give us a command-line interface inside the running `postgres` container. From there, we can do `psql project -U project` (the db role and name being defined for us by our `docker-compose` tools) and get dropped right into the `psql` command line. With a `\d+` we can see there's some Django-y stuff here -- but nothing from the models we defined in `project/api/models.py`.
 
