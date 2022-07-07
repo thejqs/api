@@ -63,7 +63,14 @@ def sprocket(request, sprocket_id):
 
 
 @require_http_methods(['POST'])
-def sprocket_update(request, new_sprocket_pkg):
+def sprocket_create(request, **kwargs):
+    new_sprocket_pkg = {
+      "teeth": kwargs.pop("teeth"),
+      "pitch_diameter": kwargs.pop("pitch_diameter"),
+      "outside_diameter": kwargs.pop("outside_diameter"),
+      "pitch": kwargs.pop("pitch")
+    }
+
     with open("data/seed_sprocket_types.json", "rw") as ss:
         data = json.load(ss)
         data["sprockets"].append(new_sprocket_pkg)
@@ -81,7 +88,3 @@ def sprocket_update(request, new_sprocket_pkg):
             msg["status_code"] = 400
 
         return JsonResponse(msg)
-
-
-
-
