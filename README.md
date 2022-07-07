@@ -90,3 +90,30 @@ factory:
 
 Let's talk for a second about workarounds.
 
+While `make local-run` is still running, use another cli tab to check out `make local-pg-cli`. That will give us a command-line interface inside the running `postgres` container. From there, we can do `psql project -U project` (the db role and name being defined for us by our `docker-compose` tools) and get dropped right into the `psql` command line. With a `\d+` we can see there's some Django-y stuff here -- but nothing from the models we defined in `project/models.py`.
+
+OK, maybe it just failed to run the migrations we told it to in `compose/start-dev.sh`. We can run those ourselves. `\q` out of the db, then `exit` out of the container. And run `make local-makemigrations`. Huh. Nothing found. Well maybe because I made the migration files myself in `project/api/migrations/`. So let's try `make local-migrate`. Weird that it still doesn't see anything.
+
+But our application can see the models. And nothing is complaining about our db configuration in `config/settings.py`.
+
+Try running `make local-shell-plus`. Once we're in there, do this:
+```python
+$ from project.api.models import Factory
+```
+
+It ... worked. So something about the db that's running isn't properly talking to `Django`.
+
+The same is true for `Redis`.
+
+While you're still in `local-shell-plus`-land, try:
+```python
+$ from django.core.cache import cache
+```
+Then try to put something in it.
+```python
+$ cache.set("just_checking", {"msg": "here I am just checking"})
+$ cache.get("just_checking")
+```
+
+And niente. Nothin'.
+
