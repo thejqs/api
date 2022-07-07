@@ -5,7 +5,7 @@ It's designed to use `PostgreSQL` as a backend and `Redis` for caching. This wil
 
 `Docker` not being a particular strong suit (yet), we find another way to move forward.
 
-To stand it up, make sure `pipenv` is installed locally (`pip install pipenv`, perhaps, or on a Mac with `Homebrew`, `brew install pipenv`). Create a dir called `api` and clone in this repo. Run `pipenv install` to create a virtual environment -- not a necessity with `Docker` but a nice-to-have for some local dev and debugging. Installing the dependencies from the `Pipfile` will give you access to `make`, which is going to make(!) the job of setting this up a bit cleaner for us.
+To stand it up, make sure `pipenv` is installed locally (`pip install pipenv`, perhaps, or on a Mac with `Homebrew`, `brew install pipenv`). Create a dir called `api`, `cd` into it and clone in this repo. Run `pipenv install` to create a virtual environment -- not a necessity with `Docker` but a nice-to-have for some local dev and debugging. Installing the dependencies from the `Pipfile` will give you access to `make`, which is going to make(!) the job of setting this up a bit cleaner for us.
 
 To get started, go into the virtual environment with `pipenv shell`.
 
