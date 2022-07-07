@@ -88,3 +88,7 @@ def sprocket_create(request, **kwargs):
             msg["status_code"] = 400
 
         return JsonResponse(msg)
+
+
+def sprocket_update(request):
+    pass
