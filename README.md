@@ -119,7 +119,18 @@ $ cache.set("just_checking", {"msg": "here I am just checking"})
 $ cache.get("just_checking")
 ```
 
-And niente. Nothin'. But again, we can `exit()` out of `local-shell-plus` to do something like `docker ps -a` -- and there are `Redis` and `Postgres`, just hanging out.
+And niente. Nothin'. But again, we can `exit()` out of `local-shell-plus` to do something like `docker ps -a` -- and there are `Redis` and `Postgres`, just hanging out. We can also see that they _can_ talk to each other:
+
+```bash
+$ docker-compose -f "dev.yml" exec django ping postgres
+PING postgres (172.27.0.3) 56(84) bytes of data.
+64 bytes from api-postgres-1.api_default (172.27.0.3): icmp_seq=1 ttl=64 time=0.119 ms
+64 bytes from api-postgres-1.api_default (172.27.0.3): icmp_seq=2 ttl=64 time=0.111 ms
+^C
+--- postgres ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1019ms
+rtt min/avg/max/mdev = 0.111/0.115/0.119/0.004 ms
+```
 
 This being a deadline-based world, we can't go too far down this rabbit hole. We could try another backend, we can keep hunting for every scrap of information Stack Overflow can tell us.
 
