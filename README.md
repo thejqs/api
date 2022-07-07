@@ -129,4 +129,6 @@ So.
 
 For now I'll leave the models defined in `project/api/models.py` as an artifact so the intent is clear on what those would have looked like based on the given data. And we'll get on with the show.
 
-In an actual API, we'd have tokens and auth and more robust ways of controlling access. We'd log user agents and have methods for turning off previously-granted access and for blowing away entire accounts.
+In an actual API, we'd have tokens and auth and rate-limits and more robust ways of controlling access. We'd log user agents and have methods for turning off previously-granted access and for blowing away entire accounts. We'd spend more time making sure the way we're shaping our data will scale -- as it gets bigger, as more people attempt to use it, all that fun stuff.
+
+Speaking of scaling. A few ways we can think about that. There isn't much in our data to tell us how frequently to expect writes. But that seems like it will happen less frequently than reads. What I'd aimed for was, as a first line of defense, to have each successful write trigger and update of that data in the cache. And depending on how granularly someone wanted that data via the api, to keep several cache keys so it's already pre-assembled for every endpoint we provide. Validate the request, ensure the person requesting it has the right permissions (right organization? right seniority? other things?), and here's your stuff.
