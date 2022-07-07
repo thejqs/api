@@ -117,8 +117,13 @@ $ cache.set("just_checking", {"msg": "here I am just checking"})
 $ cache.get("just_checking")
 ```
 
-And niente. Nothin'. But again, we can do something like `docker ps -a` and there are `Redis` and `Postgres`, just hanging out.
+And niente. Nothin'. But again, we can `exit()` out of `local-shell-plus` to do something like `docker ps -a` -- and there are `Redis` and `Postgres`, just hanging out.
 
-This being a deadline-based world, we can't go too far down this rabbit hole. We could try another backend, we can geep hunting for every scrap of information Stack Overflow can tell us. We can kkeep losing time.
+This being a deadline-based world, we can't go too far down this rabbit hole. We could try another backend, we can geep hunting for every scrap of information Stack Overflow can tell us.
 
-Or we can deal with the fact that we have some data and a Django application that can serve it, so we need to do something hacky and bad and wrong that will only meet the barest requirements. Just to show we can. (If only for now. Plus this is all time we're not writing views because ... what exactly would we point them at?)
+We can keep losing time.
+
+Or we can deal with the fact that we have some data and a `Django` application that can serve it and take requests, so we need to do something hacky and bad and wrong that will only meet the barest requirements. Just to show we can. (If only for now. Plus this is all time we're not writing views because ... what exactly would we point them at?)
+
+So. 
+
