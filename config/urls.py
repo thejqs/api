@@ -29,7 +29,7 @@ urlpatterns = [
     re_path(r"^api/factory/(\d)/time/$", views.time, name="time"),
     re_path(r"^api/sprockets/$", views.sprockets, name="sprockets"),
     re_path(r"^api/sprocket/(\d)/$", views.sprocket, name="sprocket"),
-    re_path(r"^api/sprocket/create/(?P<teeth>\d)/(?P<pitch_diameter>\d)/(?P<outside_diameter>\d)/(?P<pitch>\d)/$", views.sprocket_create, name="sprockets_create"),
     re_path(r"^api/sprocket/(\d)/update/$", views.sprocket_update, name="sprocket_update"),
+    re_path(r"^api/sprocket/create/(?P<teeth>\d)/(?P<pitch_diameter>\d)/(?P<outside_diameter>\d)/(?P<pitch>\d)/$", views.sprocket_create, name="sprockets_create"),
 
 ]

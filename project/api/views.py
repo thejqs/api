@@ -90,5 +90,22 @@ def sprocket_create(request, **kwargs):
         return JsonResponse(msg)
 
 
-def sprocket_update(request):
-    pass
+def sprocket_update(request, sprocket_id, **kwargs):
+    with open("data/seed_sprocket_types.json", "rw") as ss:
+        data = json.load(ss)
+        data["sprockets"][int(sprocket_id)] = kwargs.pop("new_sprocket")
+        msg = {
+            "message": "",
+            "status_code": None
+        }
+        try:
+            ss.write(json.dumps(data))
+            msg["message"] = "success"
+            msg["status_code"] = 200
+        except Exception as e:
+            msg["message"] = "error"
+            msg["error"] = e
+            msg["status_code"] = 400
+
+        return JsonResponse(msg)
+
