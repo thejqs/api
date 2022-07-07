@@ -3,6 +3,8 @@ With resources and a datastore build by `docker-compose` via `make`, this is a m
 
 It's designed to use `PostgreSQL` as a backend and `Redis` for caching. This will build these resources, and their containers are accessible via `docker exec` cli, but for now `Django` isn't talking to them properly. Working on a deadline and wanting to show working views, that code reads directly from the JSON files, which is not remotely ideal.
 
+`Docker` not being a particular strong suit (yet), we find another way to move forward.
+
 To stand it up, make sure `pipenv` is installed locally. Create a dir called `api` and clone in this repo. Run `pipenv install` to create a virtual environment -- not a necessity with `docker` but a nice-to-have for some local dev and debugging. Installing the dependencies from the `Pipfile` will give you access to `make`, which is going to make(!) the job of setting this up a bit cleaner for us.
 
 To get started, go into the virtual environment with `pipenv shell`.
@@ -18,7 +20,7 @@ $ make local-build
 $ make local-run
 ```
 
-At this point, in a browser, you should be able to go to `localhost:8000/api/factories` and get back a bunch of JSON that would be long to dump in here, or, say, to `localhost:8000/api/fatory/1` and get back something that looks like this:
+At this point, in a browser, you should be able to go to `localhost:8000/api/factories` and get back a bunch of `JSON` that would be long to dump in here, or, say, to `localhost:8000/api/fatory/1` and get back something that looks like this:
 
 ```json
 factory:	
@@ -115,5 +117,8 @@ $ cache.set("just_checking", {"msg": "here I am just checking"})
 $ cache.get("just_checking")
 ```
 
-And niente. Nothin'.
+And niente. Nothin'. But again, we can do something like `docker ps -a` and there are `Redis` and `Postgres`, just hanging out.
 
+This being a deadline-based world, we can't go too far down this rabbit hole. We could try another backend, we can geep hunting for every scrap of information Stack Overflow can tell us. We can kkeep losing time.
+
+Or we can deal with the fact that we have some data and a Django application that can serve it, so we need to do something hacky and bad and wrong that will only meet the barest requirements. Just to show we can. (If only for now. Plus this is all time we're not writing views because ... what exactly would we point them at?)
