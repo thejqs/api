@@ -19,7 +19,7 @@ local-migrate:
 	docker-compose -f "dev.yml" run --rm django python manage.py migrate
 
 local-pg-cli:
-	docker exec -it backend-postgres-1 bash
+	docker exec -it api-postgres-1 bash
 
 local-run:
 	docker-compose -f "dev.yml" up
