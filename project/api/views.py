@@ -3,115 +3,97 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 
+from project.api.models import Factory, Sprocket
+
 
 def factories(request):
-    with open("data/seed_factory_data.json") as sf:
-        data = json.load(sf)
-        data["count"] = len(data["factories"])
-        return JsonResponse(data, safe=False)
+    data = list(Factory.objects.all().values("id", "chart_data"))
+    return JsonResponse(data, safe=False)
 
 
 def factory(request, factory_id):
-        with open("data/seed_factory_data.json") as ss:
-            data = json.load(ss)
-            return JsonResponse(data["factories"][int(factory_id)], safe=False)
+    data = list(Factory.objects.filter(id=factory_id).values("id", "chart_data"))
+    return JsonResponse(data, safe=False)
 
 
 def chart_data(request, factory_id):
-    with open("data/seed_factory_data.json") as ss:
-        data = json.load(ss)
-        return JsonResponse(data["factories"][int(factory_id)]["factory"]["chart_data"], safe=False)
+    data = Factory.objects.filter(id=factory_id).values("id", "chart_data")[0]
+    return JsonResponse(data["chart_data"], safe=False)
 
 
 def production_actual(request, factory_id):
-    with open("data/seed_factory_data.json") as ss:
-        data = json.load(ss)
-        return JsonResponse(
-            data["factories"][int(factory_id)]["factory"]["chart_data"]["sprocket_production_actual"],
-            safe=False
-        )
+    data = Factory.objects.filter(id=factory_id).values("id", "chart_data")[0]
+    return JsonResponse(data["chart_data"]["sprocket_production_actual"], safe=False)
+
 
 def production_goal(request, factory_id):
-    with open("data/seed_factory_data.json") as ss:
-        data = json.load(ss)
-        return JsonResponse(
-            data["factories"][int(factory_id)]["factory"]["chart_data"]["sprocket_production_goal"],
-            safe=False
-        )
+    data = Factory.objects.filter(id=factory_id).values("id", "chart_data")[0]
+    return JsonResponse(data["chart_data"]["sprocket_production_goal"], safe=False)
     
 
 def time(request, factory_id):
-    with open("data/seed_factory_data.json") as ss:
-        data = json.load(ss)
-        return JsonResponse(
-            data["factories"][int(factory_id)]["factory"]["chart_data"]["time"],
-            safe=False
-        )
+    data = Factory.objects.filter(id=factory_id).values("id", "chart_data")[0]
+    return JsonResponse(data["chart_data"]["time"], safe=False)
 
 
 def sprockets(request):
-    with open("data/seed_sprocket_types.json") as ss:
-        data = json.load(ss)
-        data["count"] = len(data["sprockets"])
-        return JsonResponse(data, safe=False)
+    data = list((Sprocket.objects.all()
+        .values("teeth", "pitch", "pitch_diameter", "outside_diameter")
+    ))
+    return JsonResponse(data, safe=False)
 
 
 def sprocket(request, sprocket_id):
-    with open("data/seed_sprocket_types.json") as ss:
-        data = json.load(ss)
-        return JsonResponse(data["sprockets"][int(sprocket_id)], safe=False)
+    data = list((Sprocket.objects.filter(id=sprocket_id)
+        .values("teeth", "pitch", "pitch_diameter", "outside_diameter")
+    ))
+    return JsonResponse(data, safe=False)
 
 
-@require_http_methods(['POST'])
 def sprocket_create(request, teeth, pitch_diameter, outside_diameter, pitch):
-    new_sprocket_pkg = {
-      "teeth": teeth,
-      "pitch_diameter": pitch_diameter,
-      "outside_diameter": outside_diameter,
-      "pitch": pitch
+    msg = {
+        "message": "",
+        "status_code": None
     }
 
-    with open("data/seed_sprocket_types.json", "rw") as ss:
-        data = json.load(ss)
-        data["sprockets"].append(new_sprocket_pkg)
-        msg = {
-            "message": "",
-            "status_code": None
-        }
-        try:
-            ss.write(json.dumps(data))
-            msg["message"] = "success"
-            msg["status_code"] = 200
-        except Exception as e:
-            msg["message"] = "error"
-            msg["error"] = e
-            msg["status_code"] = 400
+    try:
+        s_created = Sprocket.objects.create(
+            teeth=teeth,
+            pitch_diameter=pitch_diameter,
+            outside_diameter=outside_diameter,
+            pitch=pitch
+        )
+        s_created.save()
+        msg["message"] = "success"
+        msg["status_code"] = 200
+    except Exception as e:
+        msg["message"] = "error"
+        msg["error"] = e
+        msg["status_code"] = 400
 
-        return JsonResponse(msg)
+    return JsonResponse(msg, safe=False)
 
 
 def sprocket_update(request, sprocket_id, teeth, pitch_diameter, outside_diameter, pitch):
-    new_sprocket_pkg = {
-        "teeth": teeth,
-        "pitch_diameter": pitch_diameter,
-        "outside_diameter": outside_diameter,
-        "pitch": pitch
+    msg = {
+        "message": "",
+        "status_code": None
     }
-    with open("data/seed_sprocket_types.json", "rw") as ss:
-        data = json.load(ss)
-        data["sprockets"][int(sprocket_id)] = new_sprocket
-        msg = {
-            "message": "",
-            "status_code": None
-        }
-        try:
-            ss.write(json.dumps(data))
-            msg["message"] = "success"
-            msg["status_code"] = 200
-        except Exception as e:
+
+    try:
+        to_update = Sprocket.objects.filter(id=sprocket_id)
+        to_update.update(
+            teeth=teeth,
+            pitch_diameter=pitch_diameter,
+            outside_diameter=outside_diameter,
+            pitch=pitch
+        )
+        msg["message"] = f"success! updated sprocket ID {sprocket_id}"
+        msg["status_code"] = 200
+    except Exception as e:
             msg["message"] = "error"
             msg["error"] = e
             msg["status_code"] = 400
 
-        return JsonResponse(msg)
+    return JsonResponse(msg, safe=False)
 
