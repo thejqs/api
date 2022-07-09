@@ -88,11 +88,11 @@ ASGI_APPLICATION = "config.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 DATABASES = {
-    "default": env.db("DATABASE_URL", default="postgres:///project"),
+    "default": env.db("DATABASE_URL", default="db:///project"),
 }
 _common_db_settings = {
     "ENGINE": "django.db.backends.postgresql",
-    "HOST": "postgres",
+    "HOST": "db"
 }
 DATABASES["default"].update(_common_db_settings)
 

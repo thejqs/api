@@ -15,21 +15,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import re_path
+from django.urls import path
 
 import project.api.views as views
 
 
 urlpatterns = [
-    re_path(r"admin/", admin.site.urls, name="admin"),
-    re_path(r"^api/factories/$", views.factories, name="factories"),
-    re_path(r"^api/factory/(\d)/$", views.factory, name="factory"),
-    re_path(r"^api/factory/(\d)/chart-data/$", views.chart_data, name="chart_data"),
-    re_path(r"^api/factory/(\d)/production-actual/$", views.production_actual, name="production"),
-    re_path(r"^api/factory/(\d)/production-goal/$", views.production_goal, name="production_goal"),
-    re_path(r"^api/factory/(\d)/time/$", views.time, name="time"),
-    re_path(r"^api/sprockets/$", views.sprockets, name="sprockets"),
-    re_path(r"^api/sprocket/(\d)/$", views.sprocket, name="sprocket"),
-    re_path(r"^api/sprocket/(\d)/update/(?P<teeth>\d)/(?P<pitch_diameter>\d)/(?P<outside_diameter>\d)/(?P<pitch>\d)/$", views.sprocket_update, name="sprocket_update"),
-    re_path(r"^api/sprocket/create/(?P<teeth>\d)/(?P<pitch_diameter>\d)/(?P<outside_diameter>\d)/(?P<pitch>\d)/$", views.sprocket_create, name="sprockets_create"),
-
+    path("admin/", admin.site.urls, name="admin"),
+    path("admin/", admin.site.urls, name="admin"),
+    path("api/factories/", views.factories, name="factories"),
+    path("api/factory/<int:factory_id>/", views.factory, name="factory"),
+    path("api/factory/<int:factory_id>/chart-data/", views.chart_data, name="chart_data"),
+    path("api/factory/<int:factory_id>/production-actual/", views.production_actual, name="production"),
+    path("api/factory/<int:factory_id>/production-goal/", views.production_goal, name="production_goal"),
+    path("api/factory/<int:factory_id>/time/", views.time, name="time"),
+    path("api/sprockets/", views.sprockets, name="sprockets"),
+    path("api/sprocket/<int:sprocket_id>/", views.sprocket, name="sprocket"),
+    path("api/sprocket/<int:sprocket_id>/update/<int:teeth>/<int:pitch_diameter>/<int:outside_diameter>/<int:pitch>/", views.sprocket_update, name="sprocket_update"),
+    path("api/sprocket/create/<int:teeth>/<int:pitch_diameter>/<int:outside_diameter>/<int:pitch>/", views.sprocket_create, name="sprocket_create"),
 ]
