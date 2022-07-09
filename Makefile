@@ -9,29 +9,32 @@ help: list
 
 local-build:
 	DOCKER_BUILDKIT=0 docker-compose \
-		-f "dev.yml" \
+		-f "docker-compose.yml" \
 		build
 
+local-load-data:
+	docker-compose -f "docker-compose.yml" run --rm web python manage.py load_data
+
 local-makemigrations:
-	docker-compose -f "dev.yml" run --rm django python manage.py makemigrations
+	docker-compose -f "docker-compose.yml" run --rm web python manage.py makemigrations
 
 local-migrate:
-	docker-compose -f "dev.yml" run --rm django python manage.py migrate
+	docker-compose -f "docker-compose.yml" run --rm web python manage.py migrate
 
 local-pg-cli:
-	docker exec -it api-postgres-1 bash
+	docker exec -it api-db-1 bash
 
 local-run:
-	docker-compose -f "dev.yml" up
+	docker-compose -f "docker-compose.yml" up
 
 local-shell:
-	docker-compose -f "dev.yml" run --rm django python manage.py shell
+	docker-compose -f "docker-compose.yml" run --rm web python manage.py shell
 
 local-shell-plus:
-	docker-compose -f "dev.yml" run --rm django python ./manage.py shell_plus
+	docker-compose -f "docker-compose.yml" run --rm web python ./manage.py shell_plus
 
 local-shell-plus-sql:
-	docker-compose -f "dev.yml" run --rm django python manage.py shell_plus \
+	docker-compose -f "docker-compose.yml" run --rm web python manage.py shell_plus \
 		--print-sql
 
 local-teardown-all-containers:
@@ -41,6 +44,7 @@ local-teardown-all-containers:
 	list \
 	help \
 	local-build \
+	local-load-data \
 	local-makemigrations \
 	local-migrate \
 	local-pg-cli \
