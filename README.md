@@ -1,9 +1,7 @@
 # an api
 With resources and a datastore build by `docker-compose` via `make`, this is a modest API to pull and update some arbitrary granular data provided originally in `JSON` files.
 
-It's designed to use `PostgreSQL` as a backend and `Redis` for caching. This will build these resources, and their containers are accessible via `docker exec` cli, but for now `Django` isn't talking to them properly. Working on a deadline and wanting to show working views, that code reads directly from the JSON files, which is not remotely ideal.
-
-`Docker` being something I've never set up from scratch before, we find another way to move forward.
+It's designed to use `PostgreSQL` as a backend and `Redis` for caching. This will build these resources, provide a method to load the data, and routes to pull it from its new home in the backend.
 
 To stand it up, make sure `pipenv` is installed locally (`pip install pipenv`, perhaps, or on a Mac with `Homebrew`, `brew install pipenv`). Create a dir called `api`, `cd` into it and clone in this repo. Run `pipenv install` to create a virtual environment -- not a necessity with `Docker` but a nice-to-have for some local dev and debugging. Installing the dependencies from the `Pipfile` will give you access to `make`, which is going to make(!) the job of setting this up a bit cleaner for us.
 
@@ -21,6 +19,8 @@ $ make local-run
 ```
 
 One nice touch: Even though our code is running in a container, using `py-autoreload` from `uwsgi` means changes we make locally will get autorefreshed into the container.
+
+Before we test the endpoints, we'll need to load some data. There's a `make` target wrapped around a `Django` management command to do that for us. Run `make local-load-data`. If there are no errors in the modest output, we can keep going.
 
 At this point, in a browser, you should be able to go to `localhost:8000/api/factories` and get back a bunch of `JSON` that would be long to dump in here, or, say, to `localhost:8000/api/factory/1` and get back something that looks like this:
 
@@ -94,57 +94,29 @@ factory:
 
 Prefer to see only that `chart_data` for a specific `factory`? Try `localhost:8000/api/factory/2/chart-data`.
 
-Now. Let's talk for a minute about workarounds.
-
-While `make local-run` is still running, use another cli tab to check out `make local-pg-cli`. That will give us a command-line interface inside the running `postgres` container. From there, we can do `psql project -U project` (the db role and name being defined for us by our `docker-compose` tools) and get dropped right into the `psql` command line. With a `\d+` we can see there's some `Django`-y stuff here -- but nothing from the models we defined in `project/api/models.py`.
-
-OK, maybe it just failed to run the migrations we told it to in `compose/start-dev.sh`. We can run those ourselves. `\q` out of the db, then `exit` out of the container. And run `make local-makemigrations`. Huh. Nothing found. Well maybe because I made the migration files myself in `project/api/migrations/`. So let's try `make local-migrate`. Weird that it still doesn't see anything.
-
-But our application can see the models. And nothing is complaining about our db configuration in `config/settings.py`.
-
-Try running `make local-shell-plus`. Once we're in there, do this:
-```python
-$ from project.api.models import Factory
+There are also methods to update and create `Sprocket` instances. As defined in `config/urls.py`, a request to update a specific sprocket should look like this:
+```
+http://localhost:8000/api/sprocket/create/5/6/4/7/
 ```
 
-It ... worked. So something about the db that's running isn't properly talking to `Django`.
+Those parameters after `/create/` are, in order, a sprocket's `teeth`, `pitch_diameter`, `outside_diameter` and `pitch`.
 
-The same is true for `Redis`.
-
-While you're still in `local-shell-plus`-land, try:
-```python
-$ from django.core.cache import cache
+To update an existing sprocket, we do something quite similar:
 ```
-Then try to put something in it.
-```python
-$ cache.set("just_checking", {"msg": "here I am just checking"})
-$ cache.get("just_checking")
+http://localhost:8000/api/sprocket/3/update/5/6/4/7/
 ```
 
-And niente. Nothin'. But again, we can `exit()` out of `local-shell-plus` to do something like `docker ps -a` -- and there are `Redis` and `Postgres`, just hanging out. We can also see that they _can_ talk to each other:
+The first numerical url parameter is the ID of the sprocket to update, and the rest is as above -- same order for the same parameters. Could we have added something more targeted to update only specific fields on the sprocket? Well sure. Who doesn't love iterating?
 
-```bash
-$ docker-compose -f "dev.yml" exec django ping postgres
-PING postgres (172.27.0.3) 56(84) bytes of data.
-64 bytes from api-postgres-1.api_default (172.27.0.3): icmp_seq=1 ttl=64 time=0.119 ms
-64 bytes from api-postgres-1.api_default (172.27.0.3): icmp_seq=2 ttl=64 time=0.111 ms
-^C
---- postgres ping statistics ---
-2 packets transmitted, 2 received, 0% packet loss, time 1019ms
-rtt min/avg/max/mdev = 0.111/0.115/0.119/0.004 ms
-```
+Now. Let's talk for a minute about workarounds. The first version of this used several, because, it turns out, `Django` was slightly misconfigured in a way that meant `docker-compose` was using the wrong top-level directory to try to network all the resources.
 
-This being a deadline-based world, we can't go too far down this rabbit hole. We could try another backend, we can keep hunting for every scrap of information Stack Overflow can tell us.
+Not great.
 
-We can keep losing time.
+But now that we've found that little hammer of a bug (and thoroughly mixed our metaphors) we no longer have to read data from a file and can use our actual database. We've squashed our biggest bug.
 
-Or we can deal with the fact that we have some data and a `Django` application that can serve it and take requests, so we need to do something hacky and bad and wrong that will only meet the barest requirements. Just to show we can. (If only for now. Plus this is all time we're not writing views because ... what exactly would we point them at?)
+That doesn't mean all this code is amazing. For example, because this is a local-only example project at the moment, I haven't taken the extra step of moving, say, `Django`-y app secrets and such into private configs. The url routes to the API don't register as `POST` requests. Nothing requires authentication.
 
-So. 
-
-For now I'll leave the models defined in `project/api/models.py` as an artifact so the intent is clear on what those would have looked like based on the given data. And we'll get on with the show.
-
-Also, because this is a local-only example project at the moment, I haven't taken the extra step of moving, say, `Django`-y app secrets and such into private configs.
+There is still work to be done here.
 
 In an actual API, we'd have tokens and auth and rate-limits and more robust ways of controlling access. We'd log user agents and have methods for turning off previously-granted access and for blowing away entire accounts. We'd spend more time making sure the way we're shaping our data will scale -- as it gets bigger, as more people attempt to use it, all that fun stuff. 
 
@@ -154,4 +126,4 @@ There isn't much in our data to tell us how frequently to expect writes. But tha
 
 Turns out writes are overwhelming us as sprocket production skyrockets? We can add follower dbs and read only from those, while writing to the leader.
 
-The path forward from here seems clear. Round out another few views, maybe hash or encode the data in transit for security, better obscure the parameters and shape of the data, and get `Django` talking to `Postgres` and `Redis` they way they should. Refactoring the endpoints after that should be no big deal, and a `Django` management command, perhaps run in the container via `make`, can get our data loaded the way we've designed it. 
+The path forward from here seems clear. Round out another few views (delete methods, perhaps?), maybe hash or encode the data in transit for security, better obscure the parameters and shape of the data, and flesh out caching. Refactoring the endpoints after that should be no big deal, and a `Django` management command, perhaps run in the container via `make`, can get our data loaded the way we've designed it. 
