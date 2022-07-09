@@ -1,0 +1,41 @@
+services:
+  db:
+    build:
+      context: ./compose/db/
+      dockerfile: Dockerfile-pg
+    shm_size: 512m
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+
+  web:
+    build:
+      context: ./
+      dockerfile: ./compose/web/Dockerfile-dj
+    command: /start-dev.sh
+    depends_on:
+      - db
+      - cache
+    env_file:
+      - .env
+    volumes:
+      - .:/app:delegated
+    ports:
+      - "8000:8000"
+
+  cache:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  nginx:
+    image: nginx
+    ports:
+      - "8001:80"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - web
