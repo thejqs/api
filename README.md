@@ -1,4 +1,4 @@
-# an api
+# a docker-compose'd api
 With resources and a datastore build by `docker-compose` via `make`, this is a modest API to pull and update some arbitrary granular data provided originally in `JSON` files.
 
 It's designed to use `PostgreSQL` as a backend and `Redis` for caching. This will build these resources, provide a method to load the data, and routes to pull it from its new home in the backend.
@@ -114,7 +114,7 @@ Not great.
 
 But now that we've found that little hammer of a bug (and thoroughly mixed our metaphors) we no longer have to read data from a file and can use our actual database. We've squashed our biggest bug.
 
-That doesn't mean all this code is amazing. For example, because this is a local-only example project at the moment, I haven't taken the extra step of moving, say, `Django`-y app secrets and such into private configs. The url routes to the API don't register as `POST` requests. Nothing requires authentication.
+That doesn't mean all this code is amazing. For example, because this is a local-only example project at the moment, I haven't taken the extra step of moving, say, `Django`-y app secrets and such into private configs. The url routes to the API that should be `POST` requests don't register as `POST` requests and the views don't insist on it. Nothing requires authentication.
 
 There is still work to be done here.
 
