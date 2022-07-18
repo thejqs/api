@@ -17,7 +17,7 @@ ROOT_DIR = environ.Path(__file__) - 3
 APPS_DIR = ROOT_DIR.path("api")
 
 REDIS_URL = "redis://redis:6379"
-REDIS_LOCATION = "{0}/{1}".format(env("REDIS_URL", default="redis://"), 0)
+REDIS_LOCATION = f"{env('REDIS_URL', default='redis://')}/{0}"
 
 # from pathlib import Path
 
@@ -88,13 +88,14 @@ ASGI_APPLICATION = "config.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 DATABASES = {
-    "default": env.db("DATABASE_URL", default="db:///project"),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": "db",
+        "NAME": env("POSTGRES_USER"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
+    }
 }
-_common_db_settings = {
-    "ENGINE": "django.db.backends.postgresql",
-    "HOST": "db"
-}
-DATABASES["default"].update(_common_db_settings)
 
 CACHES = {
     "default": {
